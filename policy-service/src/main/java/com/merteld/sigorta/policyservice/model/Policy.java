@@ -1,0 +1,44 @@
+package com.merteld.sigorta.policyservice.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Data
+public class Policy {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
+    private Long userId;
+
+    private Long customerId;
+
+    private String policyNumber;
+
+
+    private char status = 'T';
+    private String branchCode;
+    private double amount;
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
+    //    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.startDate = LocalDate.now();
+        this.endDate = this.startDate.plusDays(15);
+        this.createdAt = LocalDateTime.now();
+    }
+
+
+
+}
