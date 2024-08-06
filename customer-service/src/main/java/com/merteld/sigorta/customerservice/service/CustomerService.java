@@ -32,6 +32,7 @@ public class CustomerService {
 
     public List<CustomerDetailDto> getAllCustomersCurrentUser(List<Long> customerIds) {
         System.out.println(customerIds + "mert the");
+        System.out.println(customerRepository.findAllByIds(customerIds) + "mert the");
         return CustomerDetailDto.toDtoList(customerRepository.findAllByIds(customerIds));
     }
 }

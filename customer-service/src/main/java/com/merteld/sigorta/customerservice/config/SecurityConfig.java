@@ -27,17 +27,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        return http.csrf().disable()
-//                .authorizeRequests()
-//                .anyRequest().permitAll()
-//                .and()
-//                .formLogin().disable()
-//                .httpBasic().disable()
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .build();
-//    }
+
 
 
 

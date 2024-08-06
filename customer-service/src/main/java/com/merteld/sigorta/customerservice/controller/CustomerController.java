@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/v1/customer")
 @RequiredArgsConstructor
-public class CustomerController {
+public class  CustomerController {
 
     @GetMapping("/test")
     public String test(Authentication authentication) {
@@ -65,6 +65,7 @@ public class CustomerController {
         System.out.println(authentication.getPrincipal());
         List<Long> customersIds = policyClient.getCustomerIdsOfUser(Long.valueOf((String) authentication.getPrincipal())).getBody();
 
+        System.out.println(customersIds);
         return ResponseEntity.ok(customerService.getAllCustomersCurrentUser(customersIds));
     }
 }
