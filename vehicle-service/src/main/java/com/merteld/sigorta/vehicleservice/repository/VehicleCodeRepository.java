@@ -20,6 +20,7 @@ public interface VehicleCodeRepository extends JpaRepository<VehicleCode, Long> 
 
     VehicleCode findByYearAndMakeAndModel(String year, String make, String model);
 
-    double findAmountByVehicleCode(String vehicleCode);
+
+    VehicleCode findByVehicleCode(String vehicleCode);
 
 }

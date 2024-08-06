@@ -18,11 +18,8 @@ public class VehicleController {
     private final VehicleService vehicleService;
 
 
-    @PostMapping("/car")
+    @PostMapping
     public ResponseEntity<PolicyDetailDto> createVehicle(@RequestBody CreateVehicleDto createVehicleDto, @RequestParam Long customerId, @RequestParam String vehicleCode) {
-
-
-
 
         return ResponseEntity.ok((vehicleService.createVehiclePolicy(createVehicleDto, customerId, vehicleCode)));
 
