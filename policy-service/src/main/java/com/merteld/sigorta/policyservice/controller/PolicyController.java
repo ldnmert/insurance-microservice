@@ -31,7 +31,7 @@ public class PolicyController {
     @GetMapping("/policies-of-user")
     public ResponseEntity<List<PolicyDetailDto>> getPoliciesOfUser(Authentication authentication) {
 
-        List<PolicyDetailDto> policiesDetailDtos = policyService.getPoliciesOfCurrentUser((Long) authentication.getPrincipal());
+        List<PolicyDetailDto> policiesDetailDtos = policyService.getPoliciesOfCurrentUser((Long.valueOf((String)authentication.getPrincipal())));
         return ResponseEntity.ok(policiesDetailDtos);
     }
 
@@ -40,7 +40,7 @@ public class PolicyController {
         System.out.println("qww");
         Policy policy = policyService.getPolicyByPolicyNumber(policyNumber);
 
-        if(policy.getUserId() == (Long) authentication.getPrincipal()) {
+        if(policy.getUserId() == (Long.valueOf((String)authentication.getPrincipal()))) {
             return ResponseEntity.ok(PolicyDetailDto.toDto(policy));
         }
 
@@ -51,30 +51,35 @@ public class PolicyController {
 
     @GetMapping("/filter-and-sort")
     public ResponseEntity<List<PolicyDetailDto>> getFilterByStatus(@RequestParam char status, Authentication authentication, @RequestParam String sortOption) {
-        return ResponseEntity.ok(policyService.getPoliciesByUserIdAndStatusAndSort((Long) authentication.getPrincipal(), status, sortOption));
+        return ResponseEntity.ok(policyService.getPoliciesByUserIdAndStatusAndSort((Long.valueOf((String)authentication.getPrincipal())), status, sortOption));
 
     }
 
     @GetMapping("/expiring-policies")
     public ResponseEntity<List<PolicyDetailDto>> getExpiringPolicies(Authentication authentication) {
-        return ResponseEntity.ok(policyService.getExpiringPolicies((Long) authentication.getPrincipal()));
+        return ResponseEntity.ok(policyService.getExpiringPolicies((Long.valueOf((String)authentication.getPrincipal()))));
     }
 
     @GetMapping("/status-ratio")
     public ResponseEntity<Double> getPolicyRate(Authentication authentication) {
-        double ratio = policyService.getStatusKRatioByUserId((Long) authentication.getPrincipal());
+        double ratio = policyService.getStatusKRatioByUserId((Long.valueOf((String)authentication.getPrincipal())));
         return ResponseEntity.ok(ratio);
     }
 
     @GetMapping("/top-three-sell")
     public ResponseEntity<List<PolicyDetailDto>> getTopThreeSellPolicy(Authentication authentication) {
-        return ResponseEntity.ok(policyService.getTop3PoliciesByAmountDesc((Long) authentication.getPrincipal()));
+        return ResponseEntity.ok(policyService.getTop3PoliciesByAmountDesc((Long.valueOf((String)authentication.getPrincipal()))));
     }
 
     @GetMapping("/customerIdsOfUser/{userId}")
     public ResponseEntity<List<Long>> getCustomerIdsOfUser(@PathVariable Long userId, Authentication authentication) {
 //        System.out.println(authentication.getPrincipal());
         return ResponseEntity.ok(policyService.getCustomerIdsByUserIds(userId));
+    }
+
+    @PutMapping("/changeStatus")
+    public ResponseEntity<Double> changeStatusAndGetAmount(@RequestParam String policyNumber){
+        return ResponseEntity.ok(policyService.changeStatusAndGetAmount(policyNumber));
     }
 
 

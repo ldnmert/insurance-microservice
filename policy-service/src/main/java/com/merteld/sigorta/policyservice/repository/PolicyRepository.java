@@ -31,8 +31,8 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
 
     List<Policy> findByUserId(Long userId, Sort sort);
 
-    @Query("SELECT p.customerId FROM Policy p WHERE p.userId = :userId")
-    List<Long> findCustomerIdsByUserId(@Param("userId") Long userId);
+    @Query("SELECT DISTINCT p.customerId FROM Policy p WHERE p.userId = :userId")
+    List<Long> findDistinctCustomerIdsByUserId(@Param("userId") Long userId);
 
     boolean existsByPolicyNumber(String policyNumber);
 

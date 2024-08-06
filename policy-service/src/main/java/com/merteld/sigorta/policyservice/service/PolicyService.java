@@ -85,7 +85,8 @@ public class PolicyService {
 
 
     public List<Long> getCustomerIdsByUserIds(Long id){
-        return policyRepository.findCustomerIdsByUserId(id);
+        System.out.println(policyRepository.findDistinctCustomerIdsByUserId(id));
+        return policyRepository.findDistinctCustomerIdsByUserId(id);
     }
 
 
@@ -111,5 +112,11 @@ public class PolicyService {
             policyNumber = String.format("%08d", random.nextInt(100000000));
         } while (policyRepository.existsByPolicyNumber(policyNumber));
         return policyNumber;
+    }
+
+    public double changeStatusAndGetAmount(String policyNumber) {
+        Policy policy = policyRepository.findByPolicyNumber(policyNumber).orElseThrow(NoSuchElementException::new);
+        policy.setStatus('K');
+        return policyRepository.save(policy).getAmount();
     }
 }
