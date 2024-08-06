@@ -13,5 +13,6 @@ public class RegisterDto {
     private String firstName;
     private String lastName;
     private Role role;
+    private String photo;
 
 }

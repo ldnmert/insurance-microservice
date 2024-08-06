@@ -37,8 +37,13 @@ public class UserService {
         saveUser.setLastName(user.getLastName());
         saveUser.setPhone(user.getPhone());
         saveUser.setRole(user.getRole());
+        saveUser.setPhoto(user.getPhoto());
 
        User savedUser = userRepository.save(saveUser);
         return UserDto.toDto(savedUser);
+    }
+
+    public User getUserById(Long id){
+        return userRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 }

@@ -31,6 +31,8 @@ public class User {
 
     String phone;
 
+    String photo;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

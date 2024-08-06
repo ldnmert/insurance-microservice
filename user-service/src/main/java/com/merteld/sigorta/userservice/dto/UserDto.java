@@ -14,6 +14,7 @@ public class UserDto {
     private String email;
     private String phone;
     private Role role;
+    private String photo;
 
     public static UserDto toDto (User user) {
         UserDto userDto = new UserDto();
@@ -24,6 +25,7 @@ public class UserDto {
         userDto.setEmail(user.getEmail());
         userDto.setPhone(user.getPhone());
         userDto.setRole(user.getRole());
+        userDto.setPhoto(user.getPhoto());
         return userDto;
     }
 
