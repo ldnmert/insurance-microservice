@@ -20,6 +20,7 @@ public class AuthService {
     private final JwtService jwtService;
 
     public TokenDto login(LoginRequest request) {
+
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         if (authenticate.isAuthenticated())
             return TokenDto

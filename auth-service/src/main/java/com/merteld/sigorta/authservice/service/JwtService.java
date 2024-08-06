@@ -29,7 +29,7 @@ public class JwtService {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
 
-//        claims.put("currentUserId", customUserDetails.getId());
+
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -37,7 +37,7 @@ public class JwtService {
 //                .setId(customUserDetails.getId())
                 .setIssuer(userDetails.getAuthorities().iterator().next().getAuthority())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
