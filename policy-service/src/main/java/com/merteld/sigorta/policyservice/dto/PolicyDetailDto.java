@@ -16,7 +16,8 @@ public class PolicyDetailDto {
     private char status;
     private LocalDate endDate;
     private String policyNumber;
-//    private CustomerDetailDto customerDetailDto;
+    private Long customerId;
+    private CustomerDetailDto customerDetailDto;
 
 
     public static PolicyDetailDto toDto(Policy policy ) {
@@ -28,6 +29,7 @@ public class PolicyDetailDto {
         dto.setPolicyNumber(policy.getPolicyNumber());
 //        dto.setCustomerDetailDto(CustomerDetailDto.toDto(policy.getCustomer()));
         dto.setStatus(policy.getStatus());
+        dto.setCustomerId(policy.getCustomerId());
         return dto;
     }
 

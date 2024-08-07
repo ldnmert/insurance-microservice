@@ -41,6 +41,11 @@ public class  CustomerController {
         return ResponseEntity.ok(customerDetailDto);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerDetailDto> getCustomer(@PathVariable Long id) {
+        return ResponseEntity.ok(customerService.getCustomerById(id));
+    }
+
     @GetMapping("/check-customer-exist")
     public ResponseEntity<CustomerDetailDto> checkCustomerExist(@RequestParam String identificationNumber) {
         Customer customer = customerService.getCustomerByIdentificationNumber(identificationNumber);
