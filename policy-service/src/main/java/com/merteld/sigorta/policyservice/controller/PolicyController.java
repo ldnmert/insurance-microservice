@@ -1,6 +1,7 @@
 package com.merteld.sigorta.policyservice.controller;
 
 import com.merteld.sigorta.policyservice.dto.PolicyDetailDto;
+import com.merteld.sigorta.policyservice.dto.PolicyDto;
 import com.merteld.sigorta.policyservice.model.Policy;
 import com.merteld.sigorta.policyservice.service.PolicyService;
 import jakarta.ws.rs.Path;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/v1/policy")
@@ -21,7 +23,7 @@ public class PolicyController {
     private final PolicyService policyService;
 
     @PostMapping
-    ResponseEntity<PolicyDetailDto> createPolicy(String policyTypeNumber, Long customerId, double amount, Long principal){
+    ResponseEntity<PolicyDetailDto> createPolicy(String policyTypeNumber, String customerId, double amount, Long principal){
 
        return ResponseEntity.ok(policyService.createPolicy(policyTypeNumber ,customerId, amount, principal));
 
@@ -37,15 +39,12 @@ public class PolicyController {
 
     @GetMapping("/search-policy-number")
     public ResponseEntity<PolicyDetailDto> getPolicyOfCurrentUser(Authentication authentication, @RequestParam String policyNumber) {
-        System.out.println("qww");
-        Policy policy = policyService.getPolicyByPolicyNumber(policyNumber);
 
-        if(policy.getUserId() == (Long.valueOf((String)authentication.getPrincipal()))) {
-            return ResponseEntity.ok(PolicyDetailDto.toDto(policy));
-        }
+        PolicyDetailDto policy = policyService.getPolicyByPolicyNumber(policyNumber);
 
-        else
-            return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+        return ResponseEntity.ok(policy);
+
+
     }
 
 
@@ -72,7 +71,7 @@ public class PolicyController {
     }
 
     @GetMapping("/customerIdsOfUser/{userId}")
-    public ResponseEntity<List<Long>> getCustomerIdsOfUser(@PathVariable Long userId, Authentication authentication) {
+    public ResponseEntity<List<String>> getCustomerIdsOfUser(@PathVariable String userId, Authentication authentication) {
 //        System.out.println(authentication.getPrincipal());
         return ResponseEntity.ok(policyService.getCustomerIdsByUserIds(userId));
     }
@@ -80,6 +79,12 @@ public class PolicyController {
     @PutMapping("/changeStatus")
     public ResponseEntity<Double> changeStatusAndGetAmount(@RequestParam String policyNumber){
         return ResponseEntity.ok(policyService.changeStatusAndGetAmount(policyNumber));
+    }
+
+    @GetMapping("/policies/{customerId}")
+    public ResponseEntity<List<PolicyDto>> getPoliciesOfCustomer(Authentication authentication, @PathVariable String customerId) {
+        Long currentUserId = Long.valueOf( (String) authentication.getPrincipal());
+        return ResponseEntity.ok(policyService.getAllPoliciesOfCustomer(customerId ,currentUserId));
     }
 
 

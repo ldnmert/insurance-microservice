@@ -1,6 +1,9 @@
 package com.merteld.sigorta.policyservice.service;
 
+import com.merteld.sigorta.policyservice.client.CustomerClient;
+import com.merteld.sigorta.policyservice.dto.CustomerDetailDto;
 import com.merteld.sigorta.policyservice.dto.PolicyDetailDto;
+import com.merteld.sigorta.policyservice.dto.PolicyDto;
 import com.merteld.sigorta.policyservice.model.Policy;
 import com.merteld.sigorta.policyservice.repository.PolicyRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.stream.Collectors;
+
+import static com.merteld.sigorta.policyservice.dto.PolicyDetailDto.toDto;
 
 @Service
 @RequiredArgsConstructor
 public class PolicyService {
 
    private final PolicyRepository policyRepository;
+   private final CustomerClient customerClient;
 
-    public Policy getPolicyByPolicyNumber(String policyNumber) {
-        return policyRepository.findByPolicyNumber(policyNumber).get();
+    public PolicyDetailDto getPolicyByPolicyNumber(String policyNumber) {
+        Policy policy = policyRepository.findByPolicyNumber(policyNumber).get();
+        PolicyDetailDto policyDetailDto = PolicyDetailDto.toDto(policy);
+        policyDetailDto.setCustomerDetailDto(customerClient.getCustomerById(policy.getCustomerId()).getBody());
+
+
+        return policyDetailDto;
     }
 
     public List<PolicyDetailDto> getPoliciesOfCurrentUser(Long id) {
@@ -31,6 +43,7 @@ public class PolicyService {
     }
 
     public List<PolicyDetailDto> getPoliciesByUserIdAndStatusAndSort(Long id, char status, String sortOption) {
+
 
         Sort sort = Sort.by("createdAt").descending(); // Default sort by createdAt descending
 
@@ -48,19 +61,35 @@ public class PolicyService {
             }
         }
 
-        if(status == 'H') {
-            return PolicyDetailDto.toDtoList(policyRepository.findByUserId(id, sort));
+        if (status == 'H') {
+            List<Policy> policies = policyRepository.findByUserId(id, sort);
+
+            return policies.stream()
+                    .map(this::convertToPolicyDetailDto)
+                    .collect(Collectors.toList());
         }
         else {
-            return PolicyDetailDto.toDtoList(policyRepository.findByUserIdAndStatus(id, status, sort));
+            List<Policy> policies = policyRepository.findByUserIdAndStatus(id, status, sort);
+            return policies.stream()
+                    .map(this::convertToPolicyDetailDto)
+                    .collect(Collectors.toList());
         }
     }
 
+    private PolicyDetailDto convertToPolicyDetailDto(Policy policy) {
+        CustomerDetailDto customerDetailDto = customerClient.getCustomerById(policy.getCustomerId()).getBody();
+        PolicyDetailDto policyDetailDto = PolicyDetailDto.toDto(policy);
+        policyDetailDto.setCustomerDetailDto(customerDetailDto);
+        return policyDetailDto;
+    }
 
 
     public List<PolicyDetailDto> getExpiringPolicies(Long userId) {
         LocalDate endDate = LocalDate.now().plusDays(5);
-        return PolicyDetailDto.toDtoList(policyRepository.findExpiringPoliciesByUserId(userId, endDate));
+        List<Policy> expiringPolicies= policyRepository.findExpiringPoliciesByUserId(userId, endDate);
+        return expiringPolicies.stream()
+                .map(this::convertToPolicyDetailDto)
+                .collect(Collectors.toList());
     }
 
 
@@ -84,13 +113,13 @@ public class PolicyService {
     }
 
 
-    public List<Long> getCustomerIdsByUserIds(Long id){
-        System.out.println(policyRepository.findDistinctCustomerIdsByUserId(id));
+    public List<String> getCustomerIdsByUserIds(String id){
+
         return policyRepository.findDistinctCustomerIdsByUserId(id);
     }
 
 
-    public PolicyDetailDto createPolicy(String policyTypeNumber, Long customerId, double amount, Long principal) {
+    public PolicyDetailDto createPolicy(String policyTypeNumber, String customerId, double amount, Long principal) {
 
         Policy policy = new Policy();
 
@@ -100,7 +129,7 @@ public class PolicyService {
         policy.setPolicyNumber(generateUniquePolicyNumber());
         policy.setBranchCode(policyTypeNumber);
 
-        return PolicyDetailDto.toDto(policyRepository.save(policy));
+        return toDto(policyRepository.save(policy));
 
     }
 
@@ -118,5 +147,27 @@ public class PolicyService {
         Policy policy = policyRepository.findByPolicyNumber(policyNumber).orElseThrow(NoSuchElementException::new);
         policy.setStatus('K');
         return policyRepository.save(policy).getAmount();
+    }
+
+    public List<PolicyDto> getAllPoliciesOfCustomer(String customerId, Long userId){
+
+        List<Policy> policies = policyRepository.findByCustomerId(customerId);
+        List<PolicyDto> policiesDto = new ArrayList<>();
+
+        for(Policy policy : policies){
+            PolicyDto policyDto = PolicyDto.toPolicyDto(policy);
+            if(policy.getUserId() == userId){
+
+                policyDto.setMyPolicy(true);
+                policiesDto.add(policyDto);
+            }
+            else {
+                policyDto.setMyPolicy(false);
+                policiesDto.add(policyDto);
+            }
+
+        }
+
+        return policiesDto;
     }
 }

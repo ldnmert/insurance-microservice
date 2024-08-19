@@ -16,20 +16,20 @@ public class PolicyDetailDto {
     private char status;
     private LocalDate endDate;
     private String policyNumber;
-    private Long customerId;
+//    private Long customerId;
     private CustomerDetailDto customerDetailDto;
 
 
-    public static PolicyDetailDto toDto(Policy policy ) {
+    public static PolicyDetailDto toDto(Policy policy) {
         PolicyDetailDto dto = new PolicyDetailDto();
         dto.setBranchCode(policy.getBranchCode());
         dto.setAmount(policy.getAmount());
         dto.setStartDate(policy.getStartDate());
         dto.setEndDate(policy.getEndDate());
         dto.setPolicyNumber(policy.getPolicyNumber());
-//        dto.setCustomerDetailDto(CustomerDetailDto.toDto(policy.getCustomer()));
+
         dto.setStatus(policy.getStatus());
-        dto.setCustomerId(policy.getCustomerId());
+//        dto.setCustomerId(policy.getCustomerId());
         return dto;
     }
 

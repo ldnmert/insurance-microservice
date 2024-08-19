@@ -17,7 +17,7 @@ public class Policy {
 
     private Long userId;
 
-    private Long customerId;
+    private String customerId;
 
     private String policyNumber;
 
