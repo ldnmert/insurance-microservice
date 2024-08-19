@@ -33,8 +33,5 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<?> validationException(ValidationException exception) {
-        return ResponseEntity.badRequest().body(exception.getValidationErrors());
-    }
+
 }

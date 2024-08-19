@@ -20,7 +20,7 @@ public class VehicleService {
     private final VehicleRepository vehicleRepository;
     private final VehicleCodeRepository vehicleCodeRepository;
 
-    public PolicyDetailDto createVehiclePolicy(CreateVehicleDto createVehicleDto, Long customerId, String vehicleCode){
+    public PolicyDetailDto createVehiclePolicy(CreateVehicleDto createVehicleDto, String customerId, String vehicleCode){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Vehicle vehicle =  CreateVehicleDto.toVehicle(createVehicleDto);

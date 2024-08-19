@@ -14,7 +14,7 @@ public interface PolicyClient {
     ResponseEntity<PolicyDetailDto> createPolicy(@RequestParam
                                                  String policyTypeNumber,
                                                  @RequestParam
-                                                 Long customerId,
+                                                 String customerId,
                                                  @RequestParam
                                                  double amount,
                                                  @RequestParam
