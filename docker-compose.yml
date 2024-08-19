@@ -1,0 +1,208 @@
+services:
+
+  eureka:
+    container_name: eureka
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    image: merteld/eureka-server:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - service-discovery-network
+
+  gateway:
+    container_name: gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    image: merteld/gateway:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - sigorta-user
+      - service-discovery-network
+    depends_on:
+      - eureka
+
+
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    image: merteld/auth-service:latest
+    ports:
+      - "8014:8080"
+    networks:
+      - service-discovery-network
+    depends_on:
+      - eureka
+
+  userdb:
+    image: postgres
+    container_name: userpostgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: sigorta-user
+    ports:
+      - "5430:5432"
+    volumes:
+      - sigorta-user-postgres:/var/lib/postgres/data
+    networks:
+      - sigorta-user
+
+  user-service:
+    container_name: user-service
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    image: merteld/user-service:latest
+    ports:
+      - "8089:8080"
+    networks:
+      - sigorta-user
+      - service-discovery-network
+    depends_on:
+      - userdb
+      - eureka
+
+  customerdb:
+    image: mongo:latest
+    container_name: customermongo
+    ports:
+      - "27010:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: customer
+    volumes:
+      - sigorta-customer-mongo:/data/db
+    networks:
+      - sigorta-customer
+
+  customer-service:
+    container_name: customer-service
+    build:
+      context: ./customer-service
+      dockerfile: Dockerfile
+    image: merteld/customer-service:latest
+    ports:
+      - "8090:8080"
+    networks:
+      - sigorta-customer
+      - service-discovery-network
+    depends_on:
+      - customerdb
+      - eureka
+
+  paymentdb:
+    image: postgres
+    container_name: paymentpostgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: sigorta-payment
+    ports:
+      - "5426:5432"
+    volumes:
+      - sigorta-payment-postgres:/var/lib/postgres/data
+    networks:
+      - sigorta-payment
+
+  payment-service:
+    container_name: payment-service
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    image: merteld/payment-service:latest
+    ports:
+      - "8071:8080"
+    networks:
+      - sigorta-payment
+      - service-discovery-network
+    depends_on:
+      - paymentdb
+      - eureka
+
+  policydb:
+    image: mysql
+    container_name: policymysql
+    environment:
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: secretpw
+      MYSQL_DATABASE: policy-service
+    ports:
+      - "3301:3306"
+    volumes:
+      - sigorta-policy-mysql:/var/lib/mysql
+    networks:
+      - sigorta-policy
+
+  policy-service:
+    container_name: policy-service
+    build:
+      context: ./policy-service
+      dockerfile: Dockerfile
+    image: merteld/policy-service:latest
+    ports:
+      - "8051:8080"
+    networks:
+      - sigorta-policy
+      - service-discovery-network
+    depends_on:
+      - policydb
+      - eureka
+
+  vehicledb:
+    image: mysql
+    container_name: vehiclemysql
+    environment:
+      MYSQL_DATABASE: sigorta-vehicle
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: secretpw
+    ports:
+      - "3318:3306"
+    volumes:
+      - sigorta-vehicle-mysql:/var/lib/mysql
+    networks:
+      - sigorta-vehicle
+
+  vehicle-service:
+    container_name: vehicle-service
+    build:
+      context: ./vehicle-service
+      dockerfile: Dockerfile
+    image: merteld/vehicle-service:latest
+    ports:
+      - "8011:8080"
+    networks:
+      - sigorta-vehicle
+      - service-discovery-network
+    depends_on:
+      - vehicledb
+      - eureka
+
+networks:
+  service-discovery-network:
+    driver: bridge
+  sigorta-user:
+    driver: bridge
+  sigorta-customer:
+    driver: bridge
+  sigorta-payment:
+    driver: bridge
+  sigorta-policy:
+    driver: bridge
+  sigorta-vehicle:
+    driver: bridge
+
+volumes:
+  sigorta-user-postgres:
+  sigorta-customer-mongo:
+  sigorta-payment-postgres:
+  sigorta-policy-mysql:
+  sigorta-vehicle-mysql:
