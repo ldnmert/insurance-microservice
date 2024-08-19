@@ -12,6 +12,6 @@ import java.util.List;
 public interface PolicyClient {
 
     @GetMapping("/customerIdsOfUser/{userId}")
-    ResponseEntity<List<Long>> getCustomerIdsOfUser(@PathVariable Long userId);
+    ResponseEntity<List<String>> getCustomerIdsOfUser(@PathVariable Long userId);
 
 }

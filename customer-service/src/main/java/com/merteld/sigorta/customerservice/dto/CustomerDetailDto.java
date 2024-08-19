@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class CustomerDetailDto {
 
-    private Long id;
+    private String id;
 
     private String identificationNumber;
     private String name;

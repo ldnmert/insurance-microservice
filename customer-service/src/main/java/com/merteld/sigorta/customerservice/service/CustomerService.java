@@ -32,14 +32,11 @@ public class CustomerService {
         return CustomerDetailDto.toDto(customerRepository.save(customer));
     }
 
-    public List<CustomerDetailDto> getAllCustomersCurrentUser(List<Long> customerIds) {
-        System.out.println(customerIds + "mert the");
-        System.out.println(customerRepository.findAllByIds(customerIds) + "mert the");
+    public List<CustomerDetailDto> getAllCustomersCurrentUser(List<String> customerIds) {
         return CustomerDetailDto.toDtoList(customerRepository.findAllByIds(customerIds));
     }
 
-    public CustomerDetailDto getCustomerById(Long id) {
-
+    public CustomerDetailDto getCustomerById(String id) {
         return CustomerDetailDto.toDto(customerRepository.findById(id).orElseThrow(NoSuchElementException::new));
     }
 }

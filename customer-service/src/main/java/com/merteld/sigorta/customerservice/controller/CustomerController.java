@@ -42,7 +42,7 @@ public class  CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDetailDto> getCustomer(@PathVariable Long id) {
+    public ResponseEntity<CustomerDetailDto> getCustomer(@PathVariable String id) {
         return ResponseEntity.ok(customerService.getCustomerById(id));
     }
 
@@ -67,8 +67,8 @@ public class  CustomerController {
 
     @GetMapping("/customers")
     public ResponseEntity<List<CustomerDetailDto>> getCustomersByUserId(Authentication authentication) {
-        System.out.println(authentication.getPrincipal());
-        List<Long> customersIds = policyClient.getCustomerIdsOfUser(Long.valueOf((String) authentication.getPrincipal())).getBody();
+
+        List<String> customersIds = policyClient.getCustomerIdsOfUser(Long.valueOf((String) authentication.getPrincipal())).getBody();
 
         System.out.println(customersIds);
         return ResponseEntity.ok(customerService.getAllCustomersCurrentUser(customersIds));

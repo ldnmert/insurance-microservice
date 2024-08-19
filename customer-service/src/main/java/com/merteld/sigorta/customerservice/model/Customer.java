@@ -1,21 +1,21 @@
 package com.merteld.sigorta.customerservice.model;
 
-import jakarta.persistence.*;
+
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+@Document(collection = "customer")
 @Data
-@Entity
 public class Customer {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id; // MongoDB'de ID genellikle String olarak kullanılır
 
     private String identificationNumber;
-
     private String name;
     private String surname;
     private String email;
@@ -23,13 +23,13 @@ public class Customer {
     private String city;
     private String district;
 
-    @Column(name = "created_at")
+    @Field(name = "created_at")
     private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
+//    @PrePersist
+//    protected void onCreate() {
+//        this.createdAt = LocalDateTime.now();
+//    }
 
 
 }

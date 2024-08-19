@@ -1,20 +1,20 @@
 package com.merteld.sigorta.customerservice.repository;
 
 import com.merteld.sigorta.customerservice.model.Customer;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+
+public interface CustomerRepository extends MongoRepository<Customer, String> {
 
     Optional<Customer> findByIdentificationNumber(String identificationNumber);
 
+    @Query("{ '_id': { '$in': ?0 } }")
+    List<Customer> findAllByIds(List<String> ids);
+
     List<Customer> findTop20ByOrderByCreatedAtDesc();
-
-    @Query("SELECT c FROM Customer c WHERE c.id IN :ids")
-    List<Customer> findAllByIds(@Param("ids") List<Long> ids);
-
 }
+
